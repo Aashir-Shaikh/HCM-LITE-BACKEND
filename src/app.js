@@ -9,9 +9,23 @@ const { notFoundHandler, errorHandler } = require('./middleware/error');
 // CORS_ORIGIN entries may be exact origins or wildcards such as https://*.vercel.app
 const allowed = (origin) => {
   if (!origin) return true;
+  
+  // 1. Localhost allow karne ke liye (Development ke waqt)
   if (!config.isProd && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
     return true;
   }
+
+  // 2. Vercel ke subdomains allow karne ke liye (Wildcard support)
+  // Yeh aapke har Vercel deploy URL (chahe main domain ho ya preview deployment) ko allow kar dega
+  if (/^https:\/\/.*\.vercel\.app$/.test(origin)) {
+    return true;
+  }
+
+  // 3. Agar aapka koi apna custom domain hai Vercel par, toh aap usay yahan direct bhi add kar sakte hain:
+  if (origin === 'https://hcm-lite-frontend-seven.vercel.app') return true;
+
+  return false;
+};
   return config.corsOrigins.some((o) => {
     if (o === '*' || o === origin) return true;
     if (!o.includes('*')) return false;
