@@ -32,7 +32,6 @@ const allowed = (origin) => {
     const re = new RegExp('^' + o.split('*').map((x) => x.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('[^/]+') + '$');
     return re.test(origin);
   });
-};
 
 function createApp() {
   const app = express();
